@@ -20,38 +20,37 @@ class ItemController extends Controller
         //
     }
     public function create(){
-        $users = User::all();
-        $cate = Category::all();
+        $users = User::getAll();
+        $cate = Category::getAll();
         return view('admin.item.create',[
             'users' => $users,
             'cate' => $cate
         ]);
     }
     public function index(){
-        $data = Item::latest()->paginate(20);
+        $data = Item::getAll();
 
         return view('admin.item.index',['data' => $data]);
     }
     public function store(Request $request){
+       $request->validate([
+           'name'  => 'required|string',
+           'slug'  => 'required|string',
+           'price' => 'required|min:0',
+           'stock' => 'required|min:1',
+       ]);
+       $item = $request->only('name','slug','stock','user_id','category_id','is_active');
+       Item::createDB($item);
 
-       $item = new Item();
-       $item->name = $request->input('name');
-       $item->slug = $request->input('slug');
-       $item->price = $request->input('price');
-       $item->stock = $request->input('stock');
-       $item->user_id = $request->input('user_id');
-       $item->category_id = $request->input('category_id');
-
-       $item->is_active = $request->input('is_active');
-
-       $item->save();
 
        return redirect()->route('item.index');
     }
     public function edit($id)
     {
-        $item = Item::findorFail($id);
-        $category = Category::all();
+        $item = Item::getById($id);
+//         foreach ($item as $i){dd($i->slug);}
+        $data = Item::getAll();
+        $category = Category::getAll();
 
         return view('admin.item.edit',[
             'category' => $category,
@@ -64,7 +63,7 @@ class ItemController extends Controller
             'name' => 'required|max:255',
         ]);
 
-        $item = Item::findorFail($id);
+        $item = Item::getById($id);
         $item->name = $request->input('name');
         $item->slug = str_slug($request->input('name'));
         $item->stock = $request->input('stock');
@@ -77,15 +76,13 @@ class ItemController extends Controller
     }
     public function destroy($id)
     {
-        Item::where('id', $id)->delete();
+        Item::deleteDB($id);
 
         return redirect()->route('item.index');
     }
     public function search(Request $request){
         $keyword = $request->input('tu-khoa');
-        $data = [];
-        $data = User::where(['name', 'like', '%' . $keyword . '%'])
-                     ->orWhere(['slug', 'like', '%' . $keyword . '%'])->paginate(10);
+        $data = Item::searchKeyWord($keyword);
 
         return view('admin.user.index',
         [

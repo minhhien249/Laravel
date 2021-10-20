@@ -23,7 +23,11 @@
                                 <label for="exampleInputEmail1">Tên sản phẩm</label>
                                 <input value="{{ $item->name }}" type="text" class="form-control" id="name" name="name">
                             </div>
+                            <div class="form-group">
+                                <label for="exampleInputFile">Slug</label>
 
+                                <input type="text" class="form-control w-50" id="slug" name="slug" value="{{ $item->slug }}">
+                            </div>
                             <div class="form-group">
                                 <label for="exampleInputFile">Số lượng</label>
                                 <input type="number" class="form-control w-50" id="stock" name="stock" value="{{ $item->stock }}">

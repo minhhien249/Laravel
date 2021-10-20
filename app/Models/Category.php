@@ -11,7 +11,31 @@ class Category extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'parent_id',
+        'position',
+        'is_active',
+    ];
+
     public function items(){
         return $this->hasMany(Item::class);
+    }
+    public static function getAll()
+    {
+        $data = Category::all();
+
+        return $data;
+    }
+    public static function  createDB(array $cate)
+    {
+        $data = Category::create($cate);
+
+        return $data->save();
+    }
+    public static function findId($id)
+    {
+        $category = Category::find($id);
+        return $category;
     }
 }

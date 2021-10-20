@@ -48,5 +48,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public static function  createDB(array $user)
+    {
+        $data = User::create($user);
+
+        return $data->save();
+    }
+    public static function searchKeyWord($keyword)
+    {
+        $data = [];
+        $data = User::where(['name', 'like', '%' . $keyword . '%'])
+                                  ->orWhere(['email', 'like', '%' . $keyword . '%'])
+                                  ->paginate(10);
+
+        return $data;
+    }
+    public static function getAll()
+    {
+        $data = User::latest()->paginate(20);
+
+        return $data;
+    }
 
 }

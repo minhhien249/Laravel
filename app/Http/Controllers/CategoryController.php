@@ -14,12 +14,8 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
-    {
-        //
-    }
     public function index(){
-        $data = Category::all();
+        $data = Category::getAll();
 
         return view('admin.category.index',
         [
@@ -29,7 +25,7 @@ class CategoryController extends Controller
     public function create(){
         if (Auth::check()){
            if (Auth::user()->role_id == 1){
-               $data = Category::all();
+               $data = Category::getAll();
 
                return view('admin.category.create',[
                 'data' => $data
@@ -44,19 +40,15 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $category = new Category();
-        $category->parent_id = $request->input('parent_id');
-        $category->name = $request->input('name');
-        $category->position = $request->input('position');
-        $category->is_active =$request->input('is_active');
-        $category->save();
+        $category = $request->only('parent_id','name','position','is_active');
+        Category::createDB($category);
+
 
         return redirect()->route('category.index');
     }
     public function show($id)
     {
-
-        $category = Category::find($id);
+        $category = Category::findId($id);
 
         return view('admin.category.show', [
             'category' => $category

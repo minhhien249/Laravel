@@ -36,6 +36,7 @@
                                 <tr class="item-{{ $item->id }}"> <!-- Thêm Class Cho Dòng -->
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->slug }}</td>
+                                    <td>{{ $item->stock }}</td>
                                     <td>{{ $item->price }}</td>
                                     <td>{{ ($item->is_active == 1) ? 'Hoạt động' : 'Dừng' }}</td>
                                     <td class="text-center">
